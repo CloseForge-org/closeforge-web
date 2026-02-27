@@ -72,11 +72,20 @@
     }
 
     .logo {
+      display: inline-flex; align-items: center;
+      text-decoration: none;
+    }
+
+    .logo img {
+      height: 36px; width: auto;
+    }
+
+    .logo-text {
       font-size: 21px; font-weight: 800; letter-spacing: -.5px;
       color: #fff; text-decoration: none;
     }
 
-    .logo span {
+    .logo-text span {
       background: linear-gradient(135deg, var(--accent2), var(--accent3));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
@@ -543,7 +552,7 @@
 
 <!-- NAV -->
 <nav id="nav">
-  <a href="/" class="logo">Close<span>Forge</span></a>
+  <a href="/" class="logo"><img src="logo-nav.png" alt="CloseForge"></a>
   <a href="mailto:roger@verdictai.net" class="nav-link">Contact</a>
 </nav>
 
@@ -758,7 +767,7 @@
 </section>
 
 <footer>
-  <a href="/" class="logo" style="font-size:17px;">Close<span>Forge</span></a>
+  <a href="/" class="logo"><img src="logo-nav.png" alt="CloseForge" style="height:28px;"></a>
   <span>© 2026 CloseForge. All rights reserved.</span>
   <a href="mailto:roger@verdictai.net">roger@verdictai.net</a>
 </footer>
