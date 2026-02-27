@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CloseForge — Frontier AI Products</title>
+  <meta name="description" content="Frontier AI products across every industry that matters.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #06060d;
+      --card: #0d0d1a;
+      --border: rgba(255,255,255,0.07);
+      --border-h: rgba(124,58,237,0.5);
+      --text: #f0f0f8;
+      --muted: #6060a0;
+      --muted2: #3a3a70;
+      --accent: #7c3aed;
+      --accent2: #a855f7;
+      --accent3: #c084fc;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── CURSOR GLOW ── */
+    #cursor-glow {
+      position: fixed;
+      width: 700px; height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,58,237,0.07) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+      top: 0; left: 0;
+      will-change: transform;
+      mix-blend-mode: screen;
+    }
+
+    /* ── SCROLL PROGRESS ── */
+    #progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 2px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent3));
+      z-index: 1000;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; width: 100%;
+      padding: 22px 52px;
+      display: flex; align-items: center; justify-content: space-between;
+      z-index: 200;
+      transition: background .4s, border-color .4s, padding .3s;
+    }
+
+    nav.scrolled {
+      background: rgba(6,6,13,.9);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+      padding-top: 16px; padding-bottom: 16px;
+    }
+
+    .logo {
+      font-size: 21px; font-weight: 800; letter-spacing: -.5px;
+      color: #fff; text-decoration: none;
+    }
+
+    .logo span {
+      background: linear-gradient(135deg, var(--accent2), var(--accent3));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    .nav-link {
+      color: var(--muted); text-decoration: none; font-size: 14px;
+      font-weight: 500; transition: color .2s;
+    }
+
+    .nav-link:hover { color: var(--text); }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative; min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 140px 40px 100px;
+      overflow: hidden;
+    }
+
+    #starfield {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 1000px; height: 1000px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,58,237,.12) 0%, rgba(168,85,247,.05) 40%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%,-55%);
+      animation: glow-pulse 7s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    @keyframes glow-pulse {
+      0%,100% { transform: translate(-50%,-55%) scale(1); opacity: 1; }
+      50%      { transform: translate(-50%,-55%) scale(1.1); opacity: .65; }
+    }
+
+    .hero-content { position: relative; z-index: 1; }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 18px; border-radius: 100px;
+      border: 1px solid rgba(168,85,247,.3);
+      background: rgba(124,58,237,.1);
+      font-size: 12px; color: var(--accent3);
+      margin-bottom: 40px;
+      letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600;
+    }
+
+    .badge-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent3);
+      animation: blink 2.5s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%,100% { opacity: 1; }
+      50%      { opacity: .25; }
+    }
+
+    .hero h1 {
+      font-size: clamp(44px, 7.5vw, 88px);
+      font-weight: 800; letter-spacing: -3px; line-height: 1.0;
+      margin-bottom: 32px; max-width: 920px;
+    }
+
+    .line1 { color: #fff; display: block; }
+    .line2 {
+      display: block;
+      background: linear-gradient(135deg, var(--accent2) 0%, var(--accent3) 60%, #e879f9 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .line3 { display: block; color: rgba(255,255,255,.45); }
+
+    .hero-sub {
+      font-size: 18px; color: var(--muted);
+      max-width: 520px; margin: 0 auto 56px;
+      line-height: 1.85; font-weight: 400;
+    }
+
+    .hero-cta {
+      display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 15px 32px; border-radius: 10px;
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      text-decoration: none; transition: all .25s cubic-bezier(.4,0,.2,1);
+      display: inline-flex; align-items: center; gap: 8px; border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      color: #fff;
+      box-shadow: 0 0 0 1px rgba(168,85,247,.3), 0 8px 32px rgba(124,58,237,.25);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 0 0 1px rgba(168,85,247,.5), 0 12px 48px rgba(124,58,237,.45);
+      transform: translateY(-2px);
+    }
+
+    .btn-ghost {
+      background: rgba(255,255,255,.05); color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255,255,255,.09); border-color: rgba(168,85,247,.4);
+      color: var(--accent3); transform: translateY(-2px);
+    }
+
+    .scroll-hint {
+      position: absolute; bottom: 40px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      color: var(--muted2); font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      z-index: 1; animation: float 3.5s ease-in-out infinite;
+    }
+
+    .scroll-hint .arrow {
+      width: 1px; height: 44px;
+      background: linear-gradient(180deg, transparent, var(--accent2));
+    }
+
+    @keyframes float {
+      0%,100% { transform: translateX(-50%) translateY(0); }
+      50%      { transform: translateX(-50%) translateY(10px); }
+    }
+
+    /* ── INDUSTRIES ── */
+    .industries {
+      padding: 64px 52px;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,.015);
+      position: relative; z-index: 1;
+    }
+
+    .ind-label {
+      font-size: 11px; text-transform: uppercase;
+      letter-spacing: 3px; color: var(--muted2); margin-bottom: 24px;
+    }
+
+    .ind-list {
+      display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+    }
+
+    .ind-tag {
+      padding: 8px 18px; border-radius: 100px;
+      border: 1px solid var(--border); background: transparent;
+      font-size: 13px; color: var(--muted); font-weight: 500;
+      transition: all .2s;
+    }
+
+    .ind-tag:hover {
+      border-color: rgba(168,85,247,.4); color: var(--accent3);
+      background: rgba(124,58,237,.08);
+    }
+
+    /* ── SECTION INTRO ── */
+    .section-intro {
+      text-align: center; padding: 100px 40px 64px;
+      position: relative; z-index: 1;
+    }
+
+    .eyebrow {
+      font-size: 11px; text-transform: uppercase;
+      letter-spacing: 3px; color: var(--accent2);
+      margin-bottom: 18px; font-weight: 600;
+    }
+
+    .section-title {
+      font-size: clamp(32px,4.5vw,52px);
+      font-weight: 800; letter-spacing: -1.5px; line-height: 1.1;
+      margin-bottom: 18px;
+    }
+
+    .section-sub {
+      color: var(--muted); font-size: 17px;
+      max-width: 480px; margin: 0 auto; line-height: 1.75;
+    }
+
+    /* ── SPOTLIGHTS ── */
+    .spotlights-wrap {
+      padding: 20px 0 80px;
+      border-top: 1px solid var(--border);
+      position: relative; z-index: 1;
+    }
+
+    .spotlight {
+      max-width: 1200px; margin: 0 auto;
+      padding: 80px 52px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: center;
+      opacity: 0; transform: translateY(56px);
+      transition: opacity .9s cubic-bezier(.4,0,.2,1), transform .9s cubic-bezier(.4,0,.2,1);
+    }
+
+    .spotlight.revealed { opacity: 1; transform: translateY(0); }
+    .spotlight.flip { direction: rtl; }
+    .spotlight.flip > * { direction: ltr; }
+
+    .sp-text .sp-eyebrow {
+      font-size: 11px; text-transform: uppercase;
+      letter-spacing: 3px; color: var(--accent2);
+      margin-bottom: 16px; font-weight: 600;
+    }
+
+    .sp-text h2 {
+      font-size: clamp(28px,3.5vw,44px);
+      font-weight: 800; letter-spacing: -1.5px; line-height: 1.1;
+      margin-bottom: 20px;
+    }
+
+    .sp-text p {
+      font-size: 17px; color: var(--muted); line-height: 1.85; margin-bottom: 32px;
+    }
+
+    /* Visual containers */
+    .sp-visual {
+      aspect-ratio: 4/3; border-radius: 24px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      position: relative; overflow: hidden;
+      transition: transform .4s cubic-bezier(.4,0,.2,1);
+    }
+
+    .sp-visual:hover { transform: scale(1.02); }
+
+    .vis-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(168,85,247,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(168,85,247,.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    /* LLM Council canvas */
+    #network-canvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+    }
+
+    /* WordsOfTheMasters image */
+    .suntzu-img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform .6s cubic-bezier(.4,0,.2,1);
+    }
+
+    .sp-visual:hover .suntzu-img { transform: scale(1.05); }
+
+    .suntzu-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(6,6,13,.1) 0%,
+        rgba(6,6,13,.0) 40%,
+        rgba(6,6,13,.7) 100%
+      );
+    }
+
+    .suntzu-label {
+      position: absolute; bottom: 20px; left: 24px; right: 24px;
+      font-size: 13px; color: rgba(255,255,255,.7);
+      letter-spacing: .5px;
+    }
+
+    /* MIDAIS visual */
+    .midais-visual {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 72px 52px;
+      display: flex; justify-content: center;
+      gap: 100px; flex-wrap: wrap;
+      background: rgba(255,255,255,.015);
+      position: relative; z-index: 1;
+    }
+
+    .stat {
+      text-align: center;
+      opacity: 0; transform: translateY(28px);
+      transition: opacity .65s cubic-bezier(.4,0,.2,1), transform .65s cubic-bezier(.4,0,.2,1);
+    }
+
+    .stat.revealed { opacity: 1; transform: translateY(0); }
+
+    .stat-num {
+      font-size: 56px; font-weight: 800; letter-spacing: -3px;
+      background: linear-gradient(135deg, #fff 30%, var(--accent2) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 13px; color: var(--muted);
+      margin-top: 8px; letter-spacing: .5px;
+    }
+
+    /* ── PRODUCT GRID ── */
+    .grid-section {
+      padding: 20px 52px 120px;
+      max-width: 1240px; margin: 0 auto;
+      position: relative; z-index: 1;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .product-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 30px;
+      position: relative; overflow: hidden; cursor: default;
+      opacity: 0; transform: translateY(48px) scale(.98);
+      will-change: transform, opacity;
+    }
+
+    .product-card.revealed {
+      opacity: 1; transform: translateY(0) scale(1);
+      transition:
+        opacity .65s cubic-bezier(.4,0,.2,1),
+        transform .65s cubic-bezier(.4,0,.2,1);
+    }
+
+    .product-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent2), transparent);
+      opacity: 0; transition: opacity .3s;
+    }
+
+    .product-card:hover {
+      border-color: var(--border-h);
+      box-shadow: 0 20px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(168,85,247,.15);
+    }
+
+    .product-card:hover::before { opacity: 1; }
+
+    .card-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      background: linear-gradient(135deg, rgba(124,58,237,.25), rgba(168,85,247,.1));
+      border: 1px solid rgba(168,85,247,.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; margin-bottom: 18px;
+    }
+
+    .card-cat {
+      font-size: 10px; text-transform: uppercase;
+      letter-spacing: 2px; color: var(--accent2);
+      font-weight: 600; margin-bottom: 8px;
+    }
+
+    .card-name {
+      font-size: 19px; font-weight: 700;
+      letter-spacing: -.3px; margin-bottom: 10px;
+    }
+
+    .card-desc {
+      font-size: 14px; color: var(--muted); line-height: 1.7;
+    }
+
+    .card-link {
+      display: inline-flex; align-items: center; gap: 5px;
+      margin-top: 18px; font-size: 13px; font-weight: 600;
+      color: var(--accent2); text-decoration: none;
+      transition: gap .2s, color .2s;
+    }
+
+    .card-link:hover { gap: 10px; color: var(--accent3); }
+
+    /* ── CTA ── */
+    .cta-section {
+      padding: 140px 52px; text-align: center;
+      position: relative; overflow: hidden; z-index: 1;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, rgba(124,58,237,.1), transparent 65%);
+      pointer-events: none;
+    }
+
+    .cta-inner {
+      position: relative; max-width: 620px; margin: 0 auto;
+    }
+
+    .cta-inner h2 {
+      font-size: clamp(36px,5vw,64px);
+      font-weight: 800; letter-spacing: -2.5px; line-height: 1.05;
+      margin-bottom: 22px;
+    }
+
+    .cta-inner p {
+      color: var(--muted); font-size: 17px;
+      line-height: 1.85; margin-bottom: 44px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 36px 52px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 16px;
+      font-size: 13px; color: var(--muted2);
+      position: relative; z-index: 1;
+    }
+
+    footer a { color: inherit; text-decoration: none; transition: color .2s; }
+    footer a:hover { color: var(--muted); }
+
+    /* ── REVEAL UTILITY ── */
+    .reveal {
+      opacity: 0; transform: translateY(36px);
+      transition: opacity .75s cubic-bezier(.4,0,.2,1), transform .75s cubic-bezier(.4,0,.2,1);
+    }
+
+    .reveal.revealed { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 960px) {
+      .product-grid { grid-template-columns: repeat(2,1fr); }
+      .spotlight { grid-template-columns: 1fr; gap: 40px; padding: 60px 28px; }
+      .spotlight.flip { direction: ltr; }
+      .stats-bar { gap: 56px; }
+    }
+
+    @media (max-width: 640px) {
+      nav { padding: 18px 24px; }
+      .hero { padding: 110px 24px 80px; }
+      .industries { padding: 48px 24px; }
+      .section-intro { padding: 80px 24px 48px; }
+      .grid-section { padding: 20px 24px 80px; }
+      .product-grid { grid-template-columns: 1fr; }
+      .stats-bar { padding: 56px 24px; gap: 40px; }
+      .cta-section { padding: 100px 24px; }
+      footer { padding: 28px 24px; flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="cursor-glow"></div>
+<div id="progress"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="/" class="logo">Close<span>Forge</span></a>
+  <a href="mailto:roger@verdictai.net" class="nav-link">Contact</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas id="starfield"></canvas>
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+    <div class="hero-badge"><span class="badge-dot"></span> Building at the frontier</div>
+    <h1>
+      <span class="line1" id="scramble-line">Frontier AI products</span>
+      <span class="line2">across every industry</span>
+      <span class="line3">that matters.</span>
+    </h1>
+    <p class="hero-sub">We design, build, and ship AI-powered products at the speed of the technology — across software, media, trading, real estate, and beyond.</p>
+    <div class="hero-cta">
+      <a href="#products" class="btn btn-primary">
+        Explore Products
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="mailto:roger@verdictai.net" class="btn btn-ghost">Get in Touch</a>
+    </div>
+  </div>
+  <div class="scroll-hint"><div class="arrow"></div>Scroll</div>
+</section>
+
+<!-- INDUSTRIES -->
+<div class="industries">
+  <div class="ind-label">Industries we operate in</div>
+  <div class="ind-list">
+    <span class="ind-tag">Software</span>
+    <span class="ind-tag">Media & Video</span>
+    <span class="ind-tag">Real Estate</span>
+    <span class="ind-tag">Interior Design</span>
+    <span class="ind-tag">Trading & Finance</span>
+    <span class="ind-tag">Sales & Marketing</span>
+    <span class="ind-tag">Wellness</span>
+    <span class="ind-tag">Pet Tech</span>
+    <span class="ind-tag">Prediction Markets</span>
+  </div>
+</div>
+
+<!-- SECTION INTRO -->
+<div class="section-intro reveal">
+  <div class="eyebrow">Featured Products</div>
+  <h2 class="section-title">Built to change how you work</h2>
+  <p class="section-sub">Three flagship products showing what's possible when AI is the foundation, not an afterthought.</p>
+</div>
+
+<div class="spotlights-wrap">
+
+  <!-- SPOTLIGHT 1: LLM Council -->
+  <div class="spotlight" id="sp1">
+    <div class="sp-text">
+      <div class="sp-eyebrow">AI Software · verdictai.net</div>
+      <h2>Stop trusting one AI.<br>Make them debate.</h2>
+      <p>LLM Council pits seven AI models against each other — anonymized peer review, structured deliberation, and a chairman that synthesizes the final verdict. Wisdom of crowds, applied to machines.</p>
+      <a href="https://verdictai.net" class="btn btn-primary" target="_blank" rel="noopener">
+        Visit VerdictAI
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <div class="sp-visual" id="council-visual">
+      <canvas id="network-canvas"></canvas>
+    </div>
+  </div>
+
+  <!-- SPOTLIGHT 2: WordsOfTheMasters -->
+  <div class="spotlight flip" id="sp2">
+    <div class="sp-text">
+      <div class="sp-eyebrow">AI Video · Literature</div>
+      <h2>The world's greatest books.<br>Finally, visual.</h2>
+      <p>WordsOfTheMasters uses AI video to bring humanity's greatest texts to life. Sun Tzu's Art of War. Homer's Odyssey. Ancient wisdom, rendered for the attention economy.</p>
+    </div>
+    <div class="sp-visual">
+      <img src="suntzu.png" alt="Sun Tzu — Art of War" class="suntzu-img">
+      <div class="suntzu-overlay"></div>
+      <div class="suntzu-label">Sun Tzu's Art of War · WordsOfTheMasters</div>
+    </div>
+  </div>
+
+  <!-- SPOTLIGHT 3: MIDAIS -->
+  <div class="spotlight" id="sp3">
+    <div class="sp-text">
+      <div class="sp-eyebrow">AI Trading · Finance</div>
+      <h2>The market never sleeps.<br>Neither does MIDAIS.</h2>
+      <p>Real-time AI intelligence scanning congressional trades, news overreactions, and momentum signals 24/7. Not a tool — a trading co-pilot that runs while you sleep.</p>
+    </div>
+    <div class="sp-visual">
+      <img src="midais.png" alt="MIDAIS" class="suntzu-img">
+    </div>
+  </div>
+
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat" data-delay="0">
+    <div class="stat-num" data-target="10" data-suffix="">0</div>
+    <div class="stat-label">Active Products</div>
+  </div>
+  <div class="stat" data-delay="100">
+    <div class="stat-num" data-target="9" data-suffix="">0</div>
+    <div class="stat-label">Industries</div>
+  </div>
+  <div class="stat" data-delay="200">
+    <div class="stat-num" data-target="1" data-suffix="">0</div>
+    <div class="stat-label">Home Base — Taipei</div>
+  </div>
+  <div class="stat" data-delay="300">
+    <div class="stat-num" data-target="∞" data-suffix="">∞</div>
+    <div class="stat-label">Frontier</div>
+  </div>
+</div>
+
+<!-- PRODUCT GRID -->
+<section id="products">
+  <div class="section-intro reveal">
+    <div class="eyebrow">Full Portfolio</div>
+    <h2 class="section-title">Every product we've built</h2>
+    <p class="section-sub">AI-first from day one. Each solving a real problem in a real industry.</p>
+  </div>
+
+  <div class="grid-section">
+    <div class="product-grid">
+
+      <div class="product-card" data-delay="0">
+        <div class="card-icon">⚖️</div>
+        <div class="card-cat">AI Software</div>
+        <div class="card-name">LLM Council</div>
+        <p class="card-desc">Seven AI models deliberate and challenge each other to produce a synthesized verdict. Wisdom-of-crowds for the AI era.</p>
+        <a href="https://verdictai.net" class="card-link" target="_blank" rel="noopener">verdictai.net →</a>
+      </div>
+
+      <div class="product-card" data-delay="1">
+        <div class="card-icon">🎬</div>
+        <div class="card-cat">AI Video & Media</div>
+        <div class="card-name">CultureCraft</div>
+        <p class="card-desc">AI-generated video content at scale. From concept to cinematic output — where culture meets machine creativity.</p>
+      </div>
+
+      <div class="product-card" data-delay="2">
+        <div class="card-icon">📖</div>
+        <div class="card-cat">AI Video · Literature</div>
+        <div class="card-name">WordsOfTheMasters</div>
+        <p class="card-desc">The world's greatest books illustrated through AI video. Starting with Sun Tzu's Art of War and Homer's Odyssey.</p>
+      </div>
+
+      <div class="product-card" data-delay="3">
+        <div class="card-icon">⏰</div>
+        <div class="card-cat">Mobile App · Behavior</div>
+        <div class="card-name">RiseDaily</div>
+        <p class="card-desc">The alarm clock with a streak. Snooze once and you lose it. Psychological pressure that actually gets you out of bed.</p>
+      </div>
+
+      <div class="product-card" data-delay="4">
+        <div class="card-icon">💸</div>
+        <div class="card-cat">Mobile App · Accountability</div>
+        <div class="card-name">RiseOrPay</div>
+        <p class="card-desc">Snoozing costs real money. Turn morning discipline into a financial commitment — with actual consequences.</p>
+      </div>
+
+      <div class="product-card" data-delay="5">
+        <div class="card-icon">✅</div>
+        <div class="card-cat">Mobile App · Safety</div>
+        <div class="card-name">TapOK</div>
+        <p class="card-desc">One tap says "I'm OK." Miss it, and the people who matter get notified. For solo travelers, elderly, remote workers.</p>
+      </div>
+
+      <div class="product-card" data-delay="6">
+        <div class="card-icon">🐾</div>
+        <div class="card-cat">AI App · Pet Tech</div>
+        <div class="card-name">PawMatch</div>
+        <p class="card-desc">AI-powered pet matching — connecting the right animal with the right owner using behavioral data and Gemini analysis.</p>
+      </div>
+
+      <div class="product-card" data-delay="7">
+        <div class="card-icon">🔥</div>
+        <div class="card-cat">AI Animation · Wellness</div>
+        <div class="card-name">KamaQuotient</div>
+        <p class="card-desc">Playful AI-animated education on sexual wellness. Approachable, cartoonish, designed to normalize the conversation.</p>
+      </div>
+
+      <div class="product-card" data-delay="8">
+        <div class="card-icon">📈</div>
+        <div class="card-cat">AI Trading · Finance</div>
+        <div class="card-name">MIDAIS</div>
+        <p class="card-desc">AI-driven trading intelligence scanning congressional trades, news overreactions, and momentum signals in real time.</p>
+      </div>
+
+      <div class="product-card" data-delay="9">
+        <div class="card-icon">🎯</div>
+        <div class="card-cat">AI · Prediction Markets</div>
+        <div class="card-name">Resolved</div>
+        <p class="card-desc">Automated trading bot for Kalshi and Polymarket. AI-powered positioning where information is the only edge.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-inner reveal">
+    <h2>Build with<br><span style="background:linear-gradient(135deg,var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">CloseForge.</span></h2>
+    <p>We're always looking for strategic partners, early users, and bold ideas. If you're working on something at the frontier, let's talk.</p>
+    <a href="mailto:roger@verdictai.net" class="btn btn-primary">
+      Get in Touch
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <a href="/" class="logo" style="font-size:17px;">Close<span>Forge</span></a>
+  <span>© 2026 CloseForge. All rights reserved.</span>
+  <a href="mailto:roger@verdictai.net">roger@verdictai.net</a>
+</footer>
+
+<script>
+// ═══════════════════════════════════
+// CURSOR GLOW
+// ═══════════════════════════════════
+(function() {
+  const glow = document.getElementById('cursor-glow');
+  let mx = -999, my = -999, gx = -999, gy = -999;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; }, { passive: true });
+  (function tick() {
+    gx += (mx - gx) * 0.08;
+    gy += (my - gy) * 0.08;
+    glow.style.transform = `translate(${gx - 350}px,${gy - 350}px)`;
+    requestAnimationFrame(tick);
+  })();
+})();
+
+// ═══════════════════════════════════
+// SCROLL PROGRESS + NAV
+// ═══════════════════════════════════
+const progressBar = document.getElementById('progress');
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  const s = window.scrollY;
+  const t = document.documentElement.scrollHeight - window.innerHeight;
+  progressBar.style.width = `${(s/t)*100}%`;
+  nav.classList.toggle('scrolled', s > 50);
+}, { passive: true });
+
+// ═══════════════════════════════════
+// STARFIELD
+// ═══════════════════════════════════
+(function() {
+  const c = document.getElementById('starfield');
+  const ctx = c.getContext('2d');
+  let stars = [], W, H, frame = 0;
+
+  function resize() {
+    W = c.width = c.offsetWidth;
+    H = c.height = c.offsetHeight;
+  }
+
+  function init() {
+    stars = [];
+    for (let i = 0; i < 140; i++) {
+      stars.push({
+        x: Math.random() * W, y: Math.random() * H,
+        r: Math.random() * 1.4 + 0.2,
+        a: Math.random() * 0.5 + 0.05,
+        s: Math.random() * 0.12 + 0.02,
+        ph: Math.random() * Math.PI * 2
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    frame++;
+    stars.forEach(s => {
+      const tw = s.a * (0.5 + 0.5 * Math.sin(frame * s.s + s.ph));
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(168,85,247,${tw})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', () => { resize(); init(); });
+  resize(); init(); draw();
+})();
+
+// ═══════════════════════════════════
+// TEXT SCRAMBLE
+// ═══════════════════════════════════
+(function() {
+  const el = document.getElementById('scramble-line');
+  const text = el.textContent;
+  const chars = '!<>-_\\/[]{}—=+*^?#@ABCDEFabcdef';
+  let queue = [], frameReq, frame = 0;
+
+  function scramble() {
+    queue = [];
+    for (let i = 0; i < text.length; i++) {
+      const start = Math.floor(Math.random() * 20);
+      const end = start + Math.floor(Math.random() * 20);
+      queue.push({ to: text[i], start, end, char: '' });
+    }
+    frame = 0;
+    update();
+  }
+
+  function update() {
+    let out = '', done = 0;
+    for (let i = 0; i < queue.length; i++) {
+      const { to, start, end } = queue[i];
+      if (frame >= end) {
+        done++;
+        out += to;
+      } else if (frame >= start) {
+        if (!queue[i].char || Math.random() < 0.3)
+          queue[i].char = chars[Math.floor(Math.random() * chars.length)];
+        out += `<span style="color:var(--accent2);opacity:.7">${queue[i].char}</span>`;
+      } else { out += to; }
+    }
+    el.innerHTML = out;
+    if (done < queue.length) frameReq = requestAnimationFrame(update);
+    frame++;
+  }
+
+  setTimeout(scramble, 400);
+})();
+
+// ═══════════════════════════════════
+// NODE NETWORK (LLM Council)
+// ═══════════════════════════════════
+(function() {
+  const container = document.getElementById('council-visual');
+  const c = document.getElementById('network-canvas');
+  const ctx = c.getContext('2d');
+
+  function resize() {
+    c.width = container.offsetWidth;
+    c.height = container.offsetHeight;
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+
+  const TEAL = '#00d4ff';
+  const GOLD = '#f59e0b';
+  let f = 0;
+
+  function getNodes() {
+    const W = c.width, H = c.height;
+    const cx = W/2, cy = H/2;
+    const R = Math.min(W,H) * 0.33;
+    const nodes = [{ x: cx, y: cy, r: 11, col: GOLD, ph: 0, label: 'Chairman' }];
+    for (let i = 0; i < 6; i++) {
+      const a = (i/6)*Math.PI*2 - Math.PI/2;
+      nodes.push({ x: cx + Math.cos(a)*R, y: cy + Math.sin(a)*R, r: 7, col: TEAL, ph: Math.random()*Math.PI*2 });
+    }
+    return nodes;
+  }
+
+  let nodes = getNodes();
+
+  const conns = [];
+  for (let i = 1; i <= 6; i++) {
+    conns.push([0,i]);
+    conns.push([i, (i%6)+1]);
+  }
+
+  const packets = [];
+  conns.forEach(([a,b]) => {
+    if (Math.random() > .2) {
+      packets.push({ a, b, t: Math.random(), sp: .003 + Math.random()*.004 });
+    }
+  });
+
+  function draw() {
+    ctx.clearRect(0, 0, c.width, c.height);
+    f++;
+
+    if (f % 60 === 0) nodes = getNodes();
+
+    // connections
+    conns.forEach(([a,b]) => {
+      const na = nodes[a], nb = nodes[b];
+      ctx.beginPath();
+      ctx.moveTo(na.x, na.y);
+      ctx.lineTo(nb.x, nb.y);
+      ctx.strokeStyle = 'rgba(0,212,255,.1)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    // packets
+    packets.forEach(p => {
+      p.t += p.sp;
+      if (p.t > 1) p.t = 0;
+      const na = nodes[p.a], nb = nodes[p.b];
+      const px = na.x + (nb.x - na.x)*p.t;
+      const py = na.y + (nb.y - na.y)*p.t;
+      const isGold = p.a === 0 || p.b === 0;
+      ctx.beginPath();
+      ctx.arc(px, py, 2.5, 0, Math.PI*2);
+      ctx.fillStyle = isGold ? GOLD : TEAL;
+      ctx.shadowBlur = 14; ctx.shadowColor = isGold ? GOLD : TEAL;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+
+    // nodes
+    nodes.forEach(n => {
+      const pulse = .75 + .25*Math.sin(f*.035 + n.ph);
+
+      // outer glow
+      const gr = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r*5);
+      gr.addColorStop(0, n.col+'35');
+      gr.addColorStop(1, 'transparent');
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r*5*pulse, 0, Math.PI*2);
+      ctx.fillStyle = gr; ctx.fill();
+
+      // ring
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r*2.2, 0, Math.PI*2);
+      ctx.strokeStyle = n.col+'30'; ctx.lineWidth = 1; ctx.stroke();
+
+      // node
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r*pulse, 0, Math.PI*2);
+      ctx.fillStyle = n.col;
+      ctx.shadowBlur = 24; ctx.shadowColor = n.col;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+})();
+
+
+
+// ═══════════════════════════════════
+// ANIMATED COUNTERS
+// ═══════════════════════════════════
+function animateCounter(el, target, delay) {
+  if (target === '∞') return;
+  const num = parseInt(target);
+  setTimeout(() => {
+    let start = null;
+    const dur = 1400;
+    function step(ts) {
+      if (!start) start = ts;
+      const p = Math.min((ts - start)/dur, 1);
+      const e = 1 - Math.pow(1-p, 3);
+      el.textContent = Math.floor(e * num);
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = target;
+    }
+    requestAnimationFrame(step);
+  }, delay);
+}
+
+// ═══════════════════════════════════
+// INTERSECTION OBSERVER (all reveals)
+// ═══════════════════════════════════
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('revealed');
+    io.unobserve(e.target);
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// Spotlights
+const spIO = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('revealed');
+    spIO.unobserve(e.target);
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.spotlight').forEach(el => spIO.observe(el));
+
+// Cards (staggered)
+const cardIO = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const d = parseInt(e.target.dataset.delay || 0) * 90;
+    setTimeout(() => e.target.classList.add('revealed'), d);
+    cardIO.unobserve(e.target);
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+
+document.querySelectorAll('.product-card').forEach(el => cardIO.observe(el));
+
+// Stats (counters)
+const statIO = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('revealed');
+    const numEl = e.target.querySelector('.stat-num');
+    const target = e.target.querySelector('.stat-num').dataset.target;
+    const delay = parseInt(e.target.dataset.delay || 0);
+    animateCounter(numEl, target, delay);
+    statIO.unobserve(e.target);
+  });
+}, { threshold: 0.4 });
+
+document.querySelectorAll('.stat').forEach(el => statIO.observe(el));
+
+// ═══════════════════════════════════
+// CARD 3D TILT
+// ═══════════════════════════════════
+document.querySelectorAll('.product-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const dx = (e.clientX - r.left - r.width/2) / r.width;
+    const dy = (e.clientY - r.top - r.height/2) / r.height;
+    card.style.transform = `translateY(-4px) rotateY(${dx*6}deg) rotateX(${-dy*6}deg)`;
+  });
+  card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+});
+
+// ═══════════════════════════════════
+// SMOOTH ANCHOR SCROLL
+// ═══════════════════════════════════
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  });
+});
+</script>
+</body>
+</html>
