@@ -823,7 +823,7 @@ window.addEventListener('scroll', () => {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
   camera.position.set(0, 2, 55);
-  camera.lookAt(8, 0, 0);
+  camera.lookAt(10, 0, 0); // Adjusted to center anvil
 
   // --- STARFIELD PARTICLES ---
   const starCount = 600;
@@ -879,7 +879,7 @@ window.addEventListener('scroll', () => {
     anvilGroup.add(new THREE.LineSegments(g, accentMat));
   });
 
-  anvilGroup.position.set(18, -2, -10);
+  anvilGroup.position.set(10, -2, -10); // Adjusted for mobile visibility
   anvilGroup.scale.setScalar(1.8);
   scene.add(anvilGroup);
 
