@@ -544,6 +544,7 @@
       footer { padding: 28px 24px; flex-direction: column; align-items: flex-start; }
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
 </head>
 <body>
 
@@ -812,46 +813,76 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 // ═══════════════════════════════════
-// STARFIELD
+// STARFIELD (Three.js 3D)
 // ═══════════════════════════════════
 (function() {
-  const c = document.getElementById('starfield');
-  const ctx = c.getContext('2d');
-  let stars = [], W, H, frame = 0;
+  const canvas = document.getElementById('starfield');
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
+  camera.position.z = 50;
+
+  // Create particles
+  const count = 700;
+  const pos = new Float32Array(count * 3);
+  const speeds = new Float32Array(count);
+  for (let i = 0; i < count; i++) {
+    pos[i*3]   = (Math.random() - 0.5) * 220;
+    pos[i*3+1] = (Math.random() - 0.5) * 220;
+    pos[i*3+2] = (Math.random() - 0.5) * 120;
+    speeds[i] = Math.random() * 0.5 + 0.2;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const mat = new THREE.PointsMaterial({
+    color: 0xa855f7, size: 0.55, transparent: true,
+    opacity: 0.55, sizeAttenuation: true,
+  });
+  const points = new THREE.Points(geo, mat);
+  scene.add(points);
+
+  // Second layer — smaller, dimmer
+  const geo2 = new THREE.BufferGeometry();
+  const pos2 = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    pos2[i*3]   = (Math.random() - 0.5) * 300;
+    pos2[i*3+1] = (Math.random() - 0.5) * 300;
+    pos2[i*3+2] = (Math.random() - 0.5) * 80;
+  }
+  geo2.setAttribute('position', new THREE.BufferAttribute(pos2, 3));
+  const mat2 = new THREE.PointsMaterial({
+    color: 0xc084fc, size: 0.25, transparent: true,
+    opacity: 0.25, sizeAttenuation: true,
+  });
+  scene.add(new THREE.Points(geo2, mat2));
 
   function resize() {
-    W = c.width = c.offsetWidth;
-    H = c.height = c.offsetHeight;
+    const w = canvas.offsetWidth, h = canvas.offsetHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
   }
+  resize();
+  window.addEventListener('resize', resize);
 
-  function init() {
-    stars = [];
-    for (let i = 0; i < 140; i++) {
-      stars.push({
-        x: Math.random() * W, y: Math.random() * H,
-        r: Math.random() * 1.4 + 0.2,
-        a: Math.random() * 0.5 + 0.05,
-        s: Math.random() * 0.12 + 0.02,
-        ph: Math.random() * Math.PI * 2
-      });
-    }
+  let mx = 0, my = 0;
+  document.addEventListener('mousemove', e => {
+    mx = (e.clientX / window.innerWidth - 0.5) * 2;
+    my = (e.clientY / window.innerHeight - 0.5) * 2;
+  }, { passive: true });
+
+  let t = 0;
+  function animate() {
+    t += 0.001;
+    points.rotation.y = t * 0.08 + mx * 0.04;
+    points.rotation.x = t * 0.04 - my * 0.04;
+    mat.opacity = 0.4 + 0.15 * Math.sin(t * 2);
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
   }
-
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-    frame++;
-    stars.forEach(s => {
-      const tw = s.a * (0.5 + 0.5 * Math.sin(frame * s.s + s.ph));
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
-      ctx.fillStyle = `rgba(168,85,247,${tw})`;
-      ctx.fill();
-    });
-    requestAnimationFrame(draw);
-  }
-
-  window.addEventListener('resize', () => { resize(); init(); });
-  resize(); init(); draw();
+  animate();
 })();
 
 // ═══════════════════════════════════
@@ -896,115 +927,145 @@ window.addEventListener('scroll', () => {
 })();
 
 // ═══════════════════════════════════
-// NODE NETWORK (LLM Council)
+// NODE NETWORK 3D (LLM Council) — Three.js
 // ═══════════════════════════════════
 (function() {
   const container = document.getElementById('council-visual');
-  const c = document.getElementById('network-canvas');
-  const ctx = c.getContext('2d');
+  const canvas = document.getElementById('network-canvas');
+
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+  camera.position.set(0, 6, 26);
+  camera.lookAt(0, 0, 0);
 
   function resize() {
-    c.width = container.offsetWidth;
-    c.height = container.offsetHeight;
+    const w = container.offsetWidth, h = container.offsetHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
   }
-
   resize();
   window.addEventListener('resize', resize);
 
-  const TEAL = '#00d4ff';
-  const GOLD = '#f59e0b';
-  let f = 0;
+  const TEAL = 0x00d4ff;
+  const GOLD = 0xf59e0b;
 
-  function getNodes() {
-    const W = c.width, H = c.height;
-    const cx = W/2, cy = H/2;
-    const R = Math.min(W,H) * 0.33;
-    const nodes = [{ x: cx, y: cy, r: 11, col: GOLD, ph: 0, label: 'Chairman' }];
-    for (let i = 0; i < 7; i++) {
-      const a = (i/6)*Math.PI*2 - Math.PI/2;
-      nodes.push({ x: cx + Math.cos(a)*R, y: cy + Math.sin(a)*R, r: 7, col: TEAL, ph: Math.random()*Math.PI*2 });
-    }
-    return nodes;
-  }
+  // Chairman (center)
+  const chairGeo = new THREE.SphereGeometry(1.1, 32, 32);
+  const chairMat = new THREE.MeshBasicMaterial({ color: GOLD });
+  const chairman = new THREE.Mesh(chairGeo, chairMat);
+  scene.add(chairman);
 
-  let nodes = getNodes();
-
-  const conns = [];
-  for (let i = 1; i <= 7; i++) {
-    conns.push([0,i]);
-    conns.push([i, (i%7)+1]);
-  }
-
-  const packets = [];
-  conns.forEach(([a,b]) => {
-    if (Math.random() > .2) {
-      packets.push({ a, b, t: Math.random(), sp: .003 + Math.random()*.004 });
-    }
+  // Chairman glow layers
+  [3, 5, 8].forEach((r, i) => {
+    const g = new THREE.Mesh(
+      new THREE.SphereGeometry(r, 16, 16),
+      new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: 0.04 - i * 0.01, side: THREE.BackSide })
+    );
+    scene.add(g);
   });
 
-  function draw() {
-    ctx.clearRect(0, 0, c.width, c.height);
-    f++;
+  // Satellite nodes (7 models)
+  const nodeCount = 7;
+  const R = 9;
+  const nodeGroup = new THREE.Group();
+  scene.add(nodeGroup);
 
-    if (f % 60 === 0) nodes = getNodes();
+  const nodePositions = [];
+  const nodeMeshes = [];
 
-    // connections
-    conns.forEach(([a,b]) => {
-      const na = nodes[a], nb = nodes[b];
-      ctx.beginPath();
-      ctx.moveTo(na.x, na.y);
-      ctx.lineTo(nb.x, nb.y);
-      ctx.strokeStyle = 'rgba(0,212,255,.1)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
+  for (let i = 0; i < nodeCount; i++) {
+    const a = (i / nodeCount) * Math.PI * 2;
+    const x = Math.cos(a) * R;
+    const z = Math.sin(a) * R;
+    const y = Math.sin(i * 1.1) * 1.8;
+
+    const mesh = new THREE.Mesh(
+      new THREE.SphereGeometry(0.65, 16, 16),
+      new THREE.MeshBasicMaterial({ color: TEAL })
+    );
+    mesh.position.set(x, y, z);
+    nodeGroup.add(mesh);
+    nodeMeshes.push(mesh);
+
+    // Glow
+    [1.6, 2.8].forEach((r2, gi) => {
+      const glow = new THREE.Mesh(
+        new THREE.SphereGeometry(r2, 8, 8),
+        new THREE.MeshBasicMaterial({ color: TEAL, transparent: true, opacity: gi === 0 ? 0.07 : 0.025, side: THREE.BackSide })
+      );
+      glow.position.set(x, y, z);
+      nodeGroup.add(glow);
     });
 
-    // packets
-    packets.forEach(p => {
-      p.t += p.sp;
-      if (p.t > 1) p.t = 0;
-      const na = nodes[p.a], nb = nodes[p.b];
-      const px = na.x + (nb.x - na.x)*p.t;
-      const py = na.y + (nb.y - na.y)*p.t;
-      const isGold = p.a === 0 || p.b === 0;
-      ctx.beginPath();
-      ctx.arc(px, py, 2.5, 0, Math.PI*2);
-      ctx.fillStyle = isGold ? GOLD : TEAL;
-      ctx.shadowBlur = 14; ctx.shadowColor = isGold ? GOLD : TEAL;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-    });
-
-    // nodes
-    nodes.forEach(n => {
-      const pulse = .75 + .25*Math.sin(f*.035 + n.ph);
-
-      // outer glow
-      const gr = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r*5);
-      gr.addColorStop(0, n.col+'35');
-      gr.addColorStop(1, 'transparent');
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, n.r*5*pulse, 0, Math.PI*2);
-      ctx.fillStyle = gr; ctx.fill();
-
-      // ring
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, n.r*2.2, 0, Math.PI*2);
-      ctx.strokeStyle = n.col+'30'; ctx.lineWidth = 1; ctx.stroke();
-
-      // node
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, n.r*pulse, 0, Math.PI*2);
-      ctx.fillStyle = n.col;
-      ctx.shadowBlur = 24; ctx.shadowColor = n.col;
-      ctx.fill();
-      ctx.shadowBlur = 0;
-    });
-
-    requestAnimationFrame(draw);
+    nodePositions.push(new THREE.Vector3(x, y, z));
   }
 
-  draw();
+  // Connection lines — chairman to each node
+  const lineMat = new THREE.LineBasicMaterial({ color: TEAL, transparent: true, opacity: 0.12 });
+  const origin = new THREE.Vector3(0, 0, 0);
+  nodePositions.forEach(p => {
+    const lg = new THREE.BufferGeometry().setFromPoints([origin, p]);
+    nodeGroup.add(new THREE.Line(lg, lineMat));
+  });
+
+  // Ring connections
+  for (let i = 0; i < nodeCount; i++) {
+    const a = nodePositions[i], b = nodePositions[(i + 1) % nodeCount];
+    const lg = new THREE.BufferGeometry().setFromPoints([a, b]);
+    nodeGroup.add(new THREE.Line(lg, new THREE.LineBasicMaterial({ color: TEAL, transparent: true, opacity: 0.07 })));
+  }
+
+  // Floating data packets
+  const packets = [];
+  nodePositions.forEach((p, i) => {
+    const isGold = i % 3 === 0;
+    const pMesh = new THREE.Mesh(
+      new THREE.SphereGeometry(0.22, 8, 8),
+      new THREE.MeshBasicMaterial({ color: isGold ? GOLD : TEAL })
+    );
+    scene.add(pMesh);
+    packets.push({ mesh: pMesh, from: origin.clone(), to: p.clone(), t: Math.random(), speed: 0.004 + Math.random() * 0.005, isGold });
+  });
+
+  // Camera orbit
+  let camAngle = 0;
+  let frame = 0;
+
+  function animate() {
+    frame++;
+
+    // Orbit camera
+    camAngle += 0.004;
+    camera.position.x = Math.sin(camAngle) * 26;
+    camera.position.z = Math.cos(camAngle) * 26;
+    camera.position.y = 5 + Math.sin(camAngle * 0.4) * 3;
+    camera.lookAt(0, 0, 0);
+
+    // Rotate node ring
+    nodeGroup.rotation.y += 0.003;
+
+    // Pulse chairman
+    const pulse = 1 + 0.07 * Math.sin(frame * 0.04);
+    chairman.scale.setScalar(pulse);
+
+    // Animate packets (in nodeGroup local space, then transform)
+    packets.forEach(p => {
+      p.t += p.speed;
+      if (p.t > 1) p.t = 0;
+      const local = new THREE.Vector3().lerpVectors(p.from, p.to, p.t);
+      const world = local.clone().applyEuler(nodeGroup.rotation);
+      p.mesh.position.copy(world);
+    });
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+  animate();
 })();
 
 
