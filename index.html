@@ -610,8 +610,8 @@
       <div class="sp-eyebrow" style="display:flex;align-items:center;gap:10px;">
         <span style="background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.4);color:var(--accent3);padding:3px 10px;border-radius:100px;font-size:10px;letter-spacing:2px;font-weight:700;text-transform:uppercase;">⭐ Featured Product</span>
       </div>
-      <h2 style="margin-top:16px;">One question.<br>Seven AI minds.<br>One verdict.</h2>
-      <p>LLM Council is the only platform where AI models challenge each other. Seven models answer your question independently — then anonymously critique each other's reasoning. A chairman synthesizes the final verdict. The result: decisions no single model could produce alone.</p>
+      <h2 style="margin-top:16px;">One question.<br>Eight AI minds.<br>One verdict.</h2>
+      <p>LLM Council is the only platform where AI models challenge each other. Eight models answer your question independently — then anonymously critique each other's reasoning. A chairman synthesizes the final verdict. The result: decisions no single model could produce alone.</p>
       <p style="margin-top:-16px;margin-bottom:32px;font-size:15px;color:var(--muted2);">Live at verdictai.net · Built with React, FastAPI & OpenRouter</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap;">
         <a href="https://verdictai.net" class="btn btn-primary" target="_blank" rel="noopener">
@@ -689,7 +689,7 @@
         <div class="card-icon">⚖️</div>
         <div class="card-cat">AI Software</div>
         <div class="card-name">LLM Council</div>
-        <p class="card-desc">Seven AI models deliberate and challenge each other to produce a synthesized verdict. Wisdom-of-crowds for the AI era.</p>
+        <p class="card-desc">Eight AI models deliberate and challenge each other to produce a synthesized verdict. Wisdom-of-crowds for the AI era.</p>
         <a href="https://verdictai.net" class="card-link" target="_blank" rel="noopener">verdictai.net →</a>
       </div>
 
@@ -915,7 +915,7 @@ window.addEventListener('scroll', () => {
     const cx = W/2, cy = H/2;
     const R = Math.min(W,H) * 0.33;
     const nodes = [{ x: cx, y: cy, r: 11, col: GOLD, ph: 0, label: 'Chairman' }];
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 8; i++) {
       const a = (i/6)*Math.PI*2 - Math.PI/2;
       nodes.push({ x: cx + Math.cos(a)*R, y: cy + Math.sin(a)*R, r: 7, col: TEAL, ph: Math.random()*Math.PI*2 });
     }
@@ -925,9 +925,9 @@ window.addEventListener('scroll', () => {
   let nodes = getNodes();
 
   const conns = [];
-  for (let i = 1; i <= 6; i++) {
+  for (let i = 1; i <= 8; i++) {
     conns.push([0,i]);
-    conns.push([i, (i%6)+1]);
+    conns.push([i, (i%8)+1]);
   }
 
   const packets = [];
