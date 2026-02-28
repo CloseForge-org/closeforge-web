@@ -814,7 +814,7 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 // ═══════════════════════════════════
-// STARFIELD + 3D WIREFRAME ANVIL (Three.js)
+// STARFIELD (Three.js 3D Node Network)
 // ═══════════════════════════════════
 (function() {
   const canvas = document.getElementById('starfield');
@@ -823,76 +823,113 @@ window.addEventListener('scroll', () => {
   // Fallback if WebGL not supported
   const fallback = document.getElementById('webgl-fallback');
   if (!renderer.getContext()) fallback.style.display = 'block';
-  else fallback.innerText = 'WebGL running, anvil should be visible';
+  else fallback.innerText = 'WebGL running, node network should be visible';
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(70, 1, 0.1, 1000); // Even wider FOV for mobile
-  camera.position.set(0, 2, 55);
-  camera.lookAt(5, 0, 0); // Adjusted to center anvil closer
+  const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
+  camera.position.set(0, 10, 80);
+  camera.lookAt(0, 0, 0);
 
-  // --- STARFIELD PARTICLES ---
-  const starCount = 600;
+  // --- SUBTLE STARFIELD BACKGROUND ---
+  const starCount = 300;
   const starPos = new Float32Array(starCount * 3);
   for (let i = 0; i < starCount; i++) {
-    starPos[i*3]   = (Math.random() - 0.5) * 250;
-    starPos[i*3+1] = (Math.random() - 0.5) * 250;
-    starPos[i*3+2] = (Math.random() - 0.5) * 120;
+    starPos[i*3]   = (Math.random() - 0.5) * 300;
+    starPos[i*3+1] = (Math.random() - 0.5) * 300;
+    starPos[i*3+2] = -100 - Math.random() * 100; // z=-100 to -200
   }
   const starGeo = new THREE.BufferGeometry();
   starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
   const starMat = new THREE.PointsMaterial({
-    color: 0xa855f7, size: 0.4, transparent: true,
-    opacity: 0.4, sizeAttenuation: true,
+    color: 0xa855f7, size: 0.2, transparent: true,
+    opacity: 0.3, sizeAttenuation: true,
   });
   const starPoints = new THREE.Points(starGeo, starMat);
   scene.add(starPoints);
 
-  // --- ANVIL WIREFRAME ---
-  const anvilMat = new THREE.LineBasicMaterial({ color: 0x7c3aed, transparent: true, opacity: 0.45 });
-  const anvilGroup = new THREE.Group();
+  // --- NODE NETWORK ---
+  const nodeGroup = new THREE.Group();
+  scene.add(nodeGroup);
 
-  function addAnvilPart(geo, px, py, pz, rx, ry, rz) {
-    const edges = new THREE.EdgesGeometry(geo);
-    const line = new THREE.LineSegments(edges, anvilMat);
-    line.position.set(px, py, pz);
-    if (rx) line.rotation.x = rx;
-    if (ry) line.rotation.y = ry;
-    if (rz) line.rotation.z = rz;
-    anvilGroup.add(line);
+  // Nodes (20-30 glowing spheres)
+  const nodeCount = Math.floor(20 + Math.random() * 10);
+  const nodes = [];
+  const nodePositions = [];
+  for (let i = 0; i < nodeCount; i++) {
+    // Position in a 3D cloud, denser toward center
+    const r = 40 * Math.pow(Math.random(), 1.5); // Non-linear distribution for center density
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.random() * Math.PI;
+    const x = r * Math.sin(phi) * Math.cos(theta);
+    const y = r * Math.sin(phi) * Math.sin(theta);
+    const z = r * Math.cos(phi);
+
+    const radius = 0.3 + Math.random() * 0.4;
+    const nodeMesh = new THREE.Mesh(
+      new THREE.SphereGeometry(radius, 16, 16),
+      new THREE.MeshBasicMaterial({ color: 0x7c3aed, transparent: true, opacity: 0.7 + Math.random() * 0.3 })
+    );
+    nodeMesh.position.set(x, y, z);
+    nodeGroup.add(nodeMesh);
+    nodes.push(nodeMesh);
+    nodePositions.push(new THREE.Vector3(x, y, z));
+
+    // Glow effect (larger sphere, BackSide)
+    const glowRadius = radius * (2 + Math.random());
+    const glowMesh = new THREE.Mesh(
+      new THREE.SphereGeometry(glowRadius, 16, 16),
+      new THREE.MeshBasicMaterial({ color: 0xa855f7, transparent: true, opacity: 0.05 + Math.random() * 0.1, side: THREE.BackSide })
+    );
+    glowMesh.position.set(x, y, z);
+    nodeGroup.add(glowMesh);
   }
 
-  // Base
-  addAnvilPart(new THREE.BoxGeometry(10, 2, 6), 0, -3, 0);
-  // Body
-  addAnvilPart(new THREE.BoxGeometry(6, 4, 5), 0, 0, 0);
-  // Top plate
-  addAnvilPart(new THREE.BoxGeometry(12, 1.2, 5), 0, 2.5, 0);
-  // Horn
-  addAnvilPart(new THREE.ConeGeometry(1.5, 5, 6), -8, 2.5, 0, 0, 0, Math.PI / 2);
+  // Connections (lines to 2-4 nearest neighbors within radius 25)
+  const connections = [];
+  for (let i = 0; i < nodeCount; i++) {
+    const p1 = nodePositions[i];
+    const distances = [];
+    for (let j = 0; j < nodeCount; j++) {
+      if (i === j) continue;
+      const p2 = nodePositions[j];
+      const d = p1.distanceTo(p2);
+      if (d < 25) distances.push({ idx: j, dist: d });
+    }
+    distances.sort((a, b) => a.dist - b.dist);
+    const neighborCount = Math.min(2 + Math.floor(Math.random() * 3), distances.length);
+    for (let k = 0; k < neighborCount; k++) {
+      const j = distances[k].idx;
+      // Avoid duplicates (only add if i < j)
+      if (i < j) {
+        connections.push([p1.clone(), nodePositions[j].clone()]);
+        const lineGeo = new THREE.BufferGeometry().setFromPoints([p1, nodePositions[j]]);
+        const lineMat = new THREE.LineBasicMaterial({ color: 0x7c3aed, transparent: true, opacity: 0.1 + Math.random() * 0.1 });
+        const line = new THREE.Line(lineGeo, lineMat);
+        nodeGroup.add(line);
+      }
+    }
+  }
 
-  // Purple accent highlight lines across top plate
-  const accentMat = new THREE.LineBasicMaterial({ color: 0xc084fc, transparent: true, opacity: 0.9 });
-  const accentPositions = [
-    [-5.5, 3.1, -2, 5.5, 3.1, -2],
-    [-5.5, 3.1, 0, 5.5, 3.1, 0],
-    [-5.5, 3.1, 2, 5.5, 3.1, 2],
-    [-4, 3.1, -1, 4, 3.1, 1],
-  ];
-  accentPositions.forEach(function(coords) {
-    const g = new THREE.BufferGeometry();
-    g.setAttribute('position', new THREE.Float32BufferAttribute(coords, 3));
-    anvilGroup.add(new THREE.LineSegments(g, accentMat));
-  });
-
-  anvilGroup.position.set(5, -2, -10); // Moved even closer for mobile visibility
-  anvilGroup.scale.setScalar(1.8);
-  scene.add(anvilGroup);
-
-  // --- ORBITING POINT LIGHTS ---
-  const pointLight1 = new THREE.PointLight(0xa855f7, 3, 60);
-  scene.add(pointLight1);
-  const pointLight2 = new THREE.PointLight(0x00d4ff, 1.5, 40);
-  scene.add(pointLight2);
+  // Data Packets (15-20 small spheres moving along connections)
+  const packetCount = Math.floor(15 + Math.random() * 5);
+  const packets = [];
+  for (let i = 0; i < packetCount; i++) {
+    const cIdx = Math.floor(Math.random() * connections.length);
+    const conn = connections[cIdx];
+    const packetMesh = new THREE.Mesh(
+      new THREE.SphereGeometry(0.15, 8, 8),
+      new THREE.MeshBasicMaterial({ color: 0xc084fc, transparent: true, opacity: 0.9 })
+    );
+    scene.add(packetMesh);
+    packets.push({
+      mesh: packetMesh,
+      conn: conn,
+      from: conn[0].clone(),
+      to: conn[1].clone(),
+      t: Math.random(),
+      speed: 0.01 + Math.random() * 0.02
+    });
+  }
 
   // --- RESIZE ---
   function resize() {
@@ -908,17 +945,38 @@ window.addEventListener('scroll', () => {
   let t = 0;
   function animate() {
     t += 0.008;
-
-    anvilGroup.rotation.y += 0.003;
-    anvilGroup.rotation.x = Math.sin(t * 0.3) * 0.05;
-
-    pointLight1.position.set(Math.cos(t) * 30, Math.sin(t * 0.7) * 15, Math.sin(t) * 20);
-    pointLight2.position.set(Math.cos(t + 2) * 25, Math.sin(t * 0.5 + 1) * 10, Math.sin(t + 1) * 18);
-
-    anvilMat.opacity = 0.35 + 0.2 * Math.sin(t * 1.5);
-
-    starPoints.rotation.y = t * 0.05;
-
+    
+    // Slow camera drift
+    camera.position.x = Math.sin(t * 0.1) * 10;
+    camera.position.y = 10 + Math.sin(t * 0.07) * 5;
+    camera.position.z = 80 + Math.cos(t * 0.05) * 10;
+    camera.lookAt(0, 0, 0);
+    
+    // Rotate entire network slowly
+    nodeGroup.rotation.y += 0.0015;
+    
+    // Pulse node sizes
+    nodes.forEach((n, i) => {
+      const s = 0.8 + 0.2 * Math.sin(t * (0.01 + i * 0.003));
+      n.scale.setScalar(s);
+    });
+    
+    // Animate data packets along lines
+    packets.forEach(p => {
+      p.t += p.speed;
+      if (p.t > 1) {
+        p.t = 0;
+        // Pick new random connection
+        const cIdx = Math.floor(Math.random() * connections.length);
+        p.conn = connections[cIdx];
+        p.from.copy(p.conn[0]);
+        p.to.copy(p.conn[1]);
+        p.speed = 0.01 + Math.random() * 0.02;
+      }
+      const pos = new THREE.Vector3().lerpVectors(p.from, p.to, p.t);
+      p.mesh.position.copy(pos);
+    });
+    
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
   }
