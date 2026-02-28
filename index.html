@@ -597,23 +597,29 @@
 
 <!-- SECTION INTRO -->
 <div class="section-intro reveal">
-  <div class="eyebrow">Featured Products</div>
-  <h2 class="section-title">Built to change how you work</h2>
-  <p class="section-sub">Three flagship products showing what's possible when AI is the foundation, not an afterthought.</p>
+  <div class="eyebrow">Flagship Work</div>
+  <h2 class="section-title">Products built at the frontier</h2>
+  <p class="section-sub">AI-first from day one. Each built to solve a real problem — starting with our most ambitious: LLM Council.</p>
 </div>
 
 <div class="spotlights-wrap">
 
-  <!-- SPOTLIGHT 1: LLM Council -->
-  <div class="spotlight" id="sp1">
+  <!-- SPOTLIGHT 1: LLM Council — FEATURED -->
+  <div class="spotlight" id="sp1" style="padding-top: 100px;">
     <div class="sp-text">
-      <div class="sp-eyebrow">AI Software · verdictai.net</div>
-      <h2>Stop trusting one AI.<br>Make them debate.</h2>
-      <p>LLM Council pits seven AI models against each other — anonymized peer review, structured deliberation, and a chairman that synthesizes the final verdict. Wisdom of crowds, applied to machines.</p>
-      <a href="https://verdictai.net" class="btn btn-primary" target="_blank" rel="noopener">
-        Visit VerdictAI
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
+      <div class="sp-eyebrow" style="display:flex;align-items:center;gap:10px;">
+        <span style="background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.4);color:var(--accent3);padding:3px 10px;border-radius:100px;font-size:10px;letter-spacing:2px;font-weight:700;text-transform:uppercase;">⭐ Featured Product</span>
+      </div>
+      <h2 style="margin-top:16px;">One question.<br>Seven AI minds.<br>One verdict.</h2>
+      <p>LLM Council is the only platform where AI models challenge each other. Seven models answer your question independently — then anonymously critique each other's reasoning. A chairman synthesizes the final verdict. The result: decisions no single model could produce alone.</p>
+      <p style="margin-top:-16px;margin-bottom:32px;font-size:15px;color:var(--muted2);">Live at verdictai.net · Built with React, FastAPI & OpenRouter</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="https://verdictai.net" class="btn btn-primary" target="_blank" rel="noopener">
+          Try LLM Council
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="https://llm-council.zeabur.app" class="btn btn-ghost" target="_blank" rel="noopener">Live Demo →</a>
+      </div>
     </div>
     <div class="sp-visual" id="council-visual">
       <canvas id="network-canvas"></canvas>
