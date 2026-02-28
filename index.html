@@ -561,6 +561,7 @@
 <section class="hero">
   <canvas id="starfield"></canvas>
   <div class="hero-glow"></div>
+  <div id="webgl-fallback" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--muted);font-size:14px;text-align:center;z-index:0;pointer-events:none;display:none;">3D graphics not supported on this device</div>
   <div class="hero-content">
     <div class="hero-badge"><span class="badge-dot"></span> Building at the frontier</div>
     <h1>
@@ -819,9 +820,12 @@ window.addEventListener('scroll', () => {
   const canvas = document.getElementById('starfield');
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  // Fallback if WebGL not supported
+  const fallback = document.getElementById('webgl-fallback');
+  if (!renderer.getContext()) fallback.style.display = 'block';
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+  const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000); // Wider FOV for mobile
   camera.position.set(0, 2, 55);
   camera.lookAt(10, 0, 0); // Adjusted to center anvil
 
