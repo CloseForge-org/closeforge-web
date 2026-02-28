@@ -110,7 +110,7 @@
     #starfield {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
-      z-index: 0;
+      z-index: 1;
     }
 
     .hero-glow {
@@ -823,11 +823,12 @@ window.addEventListener('scroll', () => {
   // Fallback if WebGL not supported
   const fallback = document.getElementById('webgl-fallback');
   if (!renderer.getContext()) fallback.style.display = 'block';
+  else fallback.innerText = 'WebGL running, anvil should be visible';
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000); // Wider FOV for mobile
+  const camera = new THREE.PerspectiveCamera(70, 1, 0.1, 1000); // Even wider FOV for mobile
   camera.position.set(0, 2, 55);
-  camera.lookAt(10, 0, 0); // Adjusted to center anvil
+  camera.lookAt(5, 0, 0); // Adjusted to center anvil closer
 
   // --- STARFIELD PARTICLES ---
   const starCount = 600;
@@ -883,7 +884,7 @@ window.addEventListener('scroll', () => {
     anvilGroup.add(new THREE.LineSegments(g, accentMat));
   });
 
-  anvilGroup.position.set(10, -2, -10); // Adjusted for mobile visibility
+  anvilGroup.position.set(5, -2, -10); // Moved even closer for mobile visibility
   anvilGroup.scale.setScalar(1.8);
   scene.add(anvilGroup);
 
