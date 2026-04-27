@@ -17,3 +17,10 @@
 - **When**: The visitor reads those cards
 - **Then**: Cards use descriptive non-click CTAs instead of broken links
 - **Edge case**: Public products keep working external links
+
+## Verification Results — 2026-04-28
+- **PASS**: `/products/` returns HTTP 200 in local static server.
+- **PASS**: Expanded page contains 11 cards.
+- **PASS**: Existing products remain visible: LLM Council, RiseDaily, RiseOrPay, ScanFlow 掃帳, PawMatch, TapOK, GenSmith, CoVyze.
+- **PASS**: Newly requested products are visible: SnapDesign, Resolved, OpenClawMastermind.
+- **PASS**: ImpactMesh does not appear on the products page.
