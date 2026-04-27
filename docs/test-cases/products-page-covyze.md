@@ -17,3 +17,9 @@
 - **When**: They use the navigation or hero CTA
 - **Then**: They can reach `/products`
 - **Edge case**: Existing homepage layout and downloads remain intact
+
+## Verification Results — 2026-04-28
+- **PASS**: `/products/` returns HTTP 200 in local static server.
+- **PASS**: Products page contains exactly 8 cards.
+- **PASS**: Approved roster appears: LLM Council, RiseDaily, RiseOrPay, ScanFlow 掃帳, PawMatch, TapOK, GenSmith, CoVyze.
+- **PASS**: ImpactMesh does not appear on the products page.

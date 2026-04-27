@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CloseForge Products — Frontier AI Products</title>
+  <meta name="description" content="CloseForge product portfolio: AI apps, automation tools, and frontier software built for real users.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #06060d;
+      --card: #0d0d1a;
+      --border: rgba(255,255,255,0.08);
+      --border-h: rgba(124,58,237,0.5);
+      --text: #f0f0f8;
+      --muted: #8c8cbc;
+      --muted2: #5d5d8d;
+      --accent: #7c3aed;
+      --accent2: #a855f7;
+      --accent3: #c084fc;
+      --live: #22c55e;
+      --beta: #38bdf8;
+      --soon: #eab308;
+    }
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(124,58,237,.22), transparent 32%),
+        radial-gradient(circle at 80% 8%, rgba(168,85,247,.16), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+    }
+    a { color: inherit; }
+    nav {
+      width: 100%;
+      padding: 18px 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: rgba(6,6,13,.72);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .logo { display: inline-flex; align-items: center; text-decoration: none; }
+    .logo img { height: 42px; width: auto; }
+    .nav-links { display: flex; align-items: center; gap: 22px; }
+    .nav-link { color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 600; transition: color .2s; }
+    .nav-link:hover { color: var(--text); }
+    main { max-width: 1180px; margin: 0 auto; padding: 96px 32px 88px; }
+    .hero { text-align: center; max-width: 820px; margin: 0 auto 58px; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      border: 1px solid rgba(168,85,247,.32);
+      border-radius: 999px;
+      background: rgba(124,58,237,.11);
+      color: var(--accent3);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.7px;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent3); box-shadow: 0 0 18px var(--accent3); }
+    h1 {
+      font-size: clamp(46px, 7vw, 84px);
+      font-weight: 850;
+      line-height: .98;
+      letter-spacing: -3px;
+      margin-bottom: 26px;
+    }
+    h1 span {
+      background: linear-gradient(135deg, #fff 20%, var(--accent3) 88%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle { color: var(--muted); font-size: 18px; max-width: 680px; margin: 0 auto; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .card {
+      min-height: 260px;
+      background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.01)), var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 85% 12%, rgba(168,85,247,.12), transparent 35%);
+      pointer-events: none;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-h);
+      box-shadow: 0 18px 56px rgba(0,0,0,.42), 0 0 0 1px rgba(168,85,247,.12);
+    }
+    .card-top { position: relative; display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; margin-bottom: 18px; }
+    .icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 25px;
+      background: linear-gradient(135deg, rgba(124,58,237,.28), rgba(168,85,247,.1));
+      border: 1px solid rgba(168,85,247,.22);
+    }
+    .badge {
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .badge.live { color: var(--live); border: 1px solid rgba(34,197,94,.38); background: rgba(34,197,94,.11); }
+    .badge.beta { color: var(--beta); border: 1px solid rgba(56,189,248,.38); background: rgba(56,189,248,.11); }
+    .badge.soon { color: var(--soon); border: 1px solid rgba(234,179,8,.38); background: rgba(234,179,8,.11); }
+    .category { position: relative; color: var(--accent3); font-size: 11px; text-transform: uppercase; letter-spacing: 1.6px; font-weight: 800; margin-bottom: 8px; }
+    h2 { position: relative; font-size: 24px; letter-spacing: -.6px; margin-bottom: 10px; }
+    p { position: relative; color: var(--muted); font-size: 15px; }
+    .cta {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 22px;
+      color: var(--accent3);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 750;
+    }
+    .cta:hover { color: #fff; }
+    footer {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 34px 32px 44px;
+      border-top: 1px solid var(--border);
+      color: var(--muted2);
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      font-size: 13px;
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+    @media (max-width: 760px) {
+      nav { padding: 14px 22px; }
+      .logo img { height: 34px; }
+      .nav-links { gap: 14px; }
+      main { padding: 68px 20px 64px; }
+      h1 { letter-spacing: -2px; }
+      .subtitle { font-size: 16px; }
+      .grid { grid-template-columns: 1fr; }
+      .card { min-height: auto; padding: 24px; }
+      footer { padding: 28px 20px 36px; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/" class="logo"><img src="/logo-nav-final.png" alt="CloseForge"></a>
+    <div class="nav-links">
+      <a href="/products" class="nav-link">Products</a>
+      <a href="mailto:roger@closeforge.org" class="nav-link">Contact</a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div class="eyebrow"><span class="dot"></span> CloseForge Portfolio</div>
+      <h1>Products built at <span>frontier speed.</span></h1>
+      <p class="subtitle">AI products, automation tools, and mobile apps built for real users — from decision intelligence to ADHD execution, Taiwan receipts, and accountability apps.</p>
+    </section>
+
+    <section class="grid" aria-label="CloseForge products">
+      <article class="card">
+        <div class="card-top"><div class="icon">⚖️</div><span class="badge live">Live</span></div>
+        <div class="category">AI Decision Intelligence</div>
+        <h2>LLM Council</h2>
+        <p>Multi-model AI decision assistant where several models reason independently, critique each other, and synthesize a stronger final answer.</p>
+        <a href="https://verdictai.net" class="cta" target="_blank" rel="noopener">Visit VerdictAI →</a>
+      </article>
+
+      <article class="card">
+        <div class="card-top"><div class="icon">⏰</div><span class="badge live">Live</span></div>
+        <div class="category">Mobile App · Behavior</div>
+        <h2>RiseDaily</h2>
+        <p>A streak-based alarm clock designed to make waking up psychologically costly enough that users actually get out of bed.</p>
+        <a href="https://play.google.com/store/apps/details?id=com.risedaily.app" class="cta" target="_blank" rel="noopener">Google Play →</a>
+      </article>
+
+      <article class="card">
+        <div class="card-top"><div class="icon">💸</div><span class="badge live">Live</span></div>
+        <div class="category">Mobile App · Accountability</div>
+        <h2>RiseOrPay</h2>
+        <p>A paid-snooze commitment app: snoozing costs real money, turning morning discipline into a tangible consequence.</p>
+        <a href="https://play.google.com/store/apps/details?id=com.riseorpay.app" class="cta" target="_blank" rel="noopener">Google Play →</a>
+      </article>
+
+      <article class="card">
+        <div class="card-top"><div class="icon">🧾</div><span class="badge beta">Beta</span></div>
+        <div class="category">Taiwan Automation</div>
+        <h2>ScanFlow 掃帳</h2>
+        <p>LINE-first Taiwan receipt scanner that decodes invoices, extracts receipt data, and routes records into per-user Google Sheets.</p>
+        <a href="https://scanflow.closeforge.org" class="cta" target="_blank" rel="noopener">Learn More →</a>
+      </article>
+
+      <article class="card">
+        <div class="card-top"><div class="icon">🐾</div><span class="badge live">Live</span></div>
+        <div class="category">AI App · Pet Tech</div>
+        <h2>PawMatch</h2>
+        <p>AI-powered pet matching that helps pair the right animal with the right owner using behavioral signals and Gemini analysis.</p>
+        <a href="https://play.google.com/store/apps/details?id=com.pawmatch.app" class="cta" target="_blank" rel="noopener">Google Play →</a>
+      </article>
+
+      <article class="card">
+        <div class="card-top"><div class="icon">✅</div><span class="badge soon">Coming Soon</span></div>
+        <div class="category">Mobile App · Safety</div>
+        <h2>TapOK</h2>
+        <p>One tap says “I’m OK.” Miss the check-in and trusted contacts are notified — built for solo travelers, elderly family, and remote workers.</p>
+        <span class="cta">App Store pending →</span>
+      </article>
+
+      <article class="card">
+        <div class="card-top"><div class="icon">🎬</div><span class="badge beta">Beta</span></div>
+        <div class="category">AI Video Tooling</div>
+        <h2>GenSmith</h2>
+        <p>Creative tooling for AI-generated media workflows: faster ideation, prompt iteration, asset management, and production handoff.</p>
+        <span class="cta">Private beta →</span>
+      </article>
+
+      <article class="card">
+        <div class="card-top"><div class="icon">📈</div><span class="badge beta">Building</span></div>
+        <div class="category">ADHD Productivity</div>
+        <h2>CoVyze</h2>
+        <p>Mobile-first goal execution app that turns overwhelming goals into swipeable five-minute action cards with an AI copilot.</p>
+        <a href="https://covyze.com" class="cta" target="_blank" rel="noopener">covyze.com →</a>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    <span>© 2026 CloseForge. Frontier AI Products / 前沿 AI 產品</span>
+    <a href="mailto:roger@closeforge.org">roger@closeforge.org</a>
+  </footer>
+</body>
+</html>
