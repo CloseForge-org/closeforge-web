@@ -17,3 +17,10 @@
 - **When**: They inspect CTAs for the same product roster
 - **Then**: Both pages avoid the same known-broken product URLs
 - **Edge case**: Verified working links like VerdictAI, RiseOrPay, CoVyze, and SnapDesign remain clickable
+
+## Verification Results — 2026-05-07
+- **PASS**: Local static server returns HTTP 200 for `/` and `/products`.
+- **PASS**: `/products` no longer contains clickable links for RiseDaily, ScanFlow, or PawMatch while their public URLs are unavailable.
+- **PASS**: Homepage no longer contains clickable links for RiseDaily or PawMatch unavailable Google Play listings.
+- **PASS**: Contact CTAs now use a Gmail compose URL instead of `mailto:` links that Cloudflare email protection was rewriting to a 404.
+- **PASS**: Verified remaining clickable URLs return HTTP 200: VerdictAI, RiseOrPay Google Play, CoVyze, SnapDesign CRM, OperatorDeploy, Gmail compose.
