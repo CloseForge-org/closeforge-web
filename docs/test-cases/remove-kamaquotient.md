@@ -11,3 +11,8 @@
 - **When**: They review products before and after the removed card position
 - **Then**: PawMatch, MIDAIS, and Resolved remain visible with their descriptions
 - **Edge case**: No broken HTML or dangling product-card block remains
+
+## Verification Results - 2026-05-13
+- **PASS**: `KamaQuotient` and `kamaquotient` are absent from `index.html`.
+- **PASS**: `PawMatch`, `MIDAIS`, and `Resolved` remain present in `index.html`.
+- **PASS**: Python `HTMLParser` accepted `index.html` after the product-card removal.
